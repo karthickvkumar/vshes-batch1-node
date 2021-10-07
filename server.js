@@ -56,6 +56,26 @@ app.put("/api/user/edit/:id", (request, response) => {
 
 });
 
+
+app.delete("/api/user/delete/:id", (request, response) => {
+  let id = request.params.id;
+  let index = userList.findIndex((value) => {
+    return value.id == id;
+  });
+
+  if(index < 0){
+    response.status(401).send({
+      message : "Invalid ID number"
+    });
+    return;
+  }
+
+  userList.splice(index, 1);
+  response.status(200).send({
+    message : "User profile has been deleted successfully"
+  })
+});
+
 const port = process.env.PORT || 8080;
 http.listen(port, () => {
   console.log("Node JS Server is running on port 8080")
