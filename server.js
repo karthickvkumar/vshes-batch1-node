@@ -3,9 +3,14 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const app = express();
 const http = require('http').createServer(app);
+const cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cors({
+  credentials : true,
+  origin : "*"
+}));
 
 const connection = mysql.createConnection({
   host : "localhost",
@@ -80,7 +85,21 @@ app.put("/api/user/edit/:id", (request, response) => {
 });
 
 app.delete("/api/user/delete/:id", (request, response) => {
-  
+  const id = request.params.id;
+
+  const query = `DELETE FROM user_information WHERE id = ${id}`;
+
+  connection.query(query, (error, result) => {
+    if(error){
+      response.status(500).send(error);
+      return;
+    }
+
+    response.status(200).send({
+      result : result,
+      message : "Successfully deteled a user profile"
+    })
+  });
 });
 
 const port = process.env.PORT || 8080;
